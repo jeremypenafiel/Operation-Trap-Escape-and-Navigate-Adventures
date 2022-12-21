@@ -25,7 +25,7 @@ public class Player extends Entity {
 	private int animationTicker = 0; // keeps count of how many frames have
 	private int animationIndex = 0;
 	private int animationSpeedFrames = 15; // number of frames that passes until a new animation image is shown
-	private float playerSpeed = 2.0f;
+	private float playerSpeed = 1.0f * Game.SCALE;  // changed from 2.0f (in video) to 1.0f * Game.SCALE bc different scales resulted to different player speeds (bigger scales slower, smaller scales faster)
 	private boolean isPlayerMoving = false;
 	private boolean isMovingLeft;
 	private boolean isMovingRight;
@@ -62,11 +62,14 @@ public class Player extends Entity {
 		BufferedImage subImg = playerAnimations[playerAction].getSubimage(animationIndex * 32, 0, 32, 32);
 		g.drawImage(subImg, (int) (hitbox.x - xDrawOffset), (int) (hitbox.y - yDrawOffset), (int) (width),
 				(int) (height), null);
-		drawHitbox(g);
+		//drawHitbox(g);
 	}
 
 	public void loadLevelData(int[][] lvlData) {
 		this.lvlData = lvlData;
+		if (!IsEntityOnFloor(hitbox, lvlData)) {
+			inAir = true;
+		}
 	}
 
 	/**
@@ -96,6 +99,10 @@ public class Player extends Entity {
 		 * if (isMovingUp && !isMovingDown) { ySpeed = -playerSpeed; } else if
 		 * (isMovingDown && !isMovingUp) { ySpeed = playerSpeed; }
 		 */
+		
+		if (!inAir && !IsEntityOnFloor(hitbox, lvlData)) {
+			inAir = true;
+		}
 
 		if (inAir) {
 
